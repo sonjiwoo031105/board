@@ -1,6 +1,8 @@
 "use client";
 
-import { Post } from "@/models/post";
+import AuthButton from "@/components/AuthButton";
+import WriteButton from "@/components/WriteButton";
+import { Post } from "@/types/post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -31,13 +33,10 @@ export default function Home() {
     <main className="p-4 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">📌 게시판</h1>
-
-        <Link
-          href="/write"
-          className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm"
-        >
-          글 작성하기
-        </Link>
+        <div className="flex">
+          <AuthButton />
+          <WriteButton />
+        </div>
       </div>
 
       {posts.length === 0 ? (
@@ -50,7 +49,7 @@ export default function Home() {
                 <h2 className="text-xl font-semibold hover:underline">{post.title}</h2>
               </Link>
               <p className="text-gray-600 text-sm">
-                by {post.author ?? "익명"} |{" "}
+                by {post.author?.name ?? "익명"} | {" "}
                 {new Date(post.createdAt).toLocaleString()}
               </p>
               <p className="mt-2">{post.content}</p>

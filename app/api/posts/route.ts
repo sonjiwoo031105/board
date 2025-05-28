@@ -1,11 +1,16 @@
 import { connectDB } from "@/lib/mongodb";
-import { Post } from "@/models/post";
+import { Post } from "@/types/post";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "../auth/[...nextauth]/route";
 
 export async function POST(req: Request) {
     try {
-        const body = await req.json();
-        const { title, content, author } = body;
+        const session = await getServerSession(authOptions);
+        if (!session) 
+            return NextResponse.json({ message: "로그인 필요" }, { status: 401 });
+
+        const { title, content } = await req.json();
 
         if (!title || !content) {
             return NextResponse.json({ message: "제목과 내용을 입력해주세요." }, { status: 400 });
@@ -14,7 +19,10 @@ export async function POST(req: Request) {
         const newPost: Post = {
             title,
             content,
-            author: author || "익명",
+            author: {
+                name: session.user?.name,
+                email: session.user?.email,
+            },
             createdAt: new Date().toISOString(),
         };
 

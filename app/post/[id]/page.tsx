@@ -14,7 +14,7 @@ export default async function PostDetail({ params }: Props) {
     <main className="max-w-2xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
       <p className="text-sm text-gray-600 mb-4">
-        by {post.author ?? "익명"} |{" "}
+        by {post.author?.name ?? "익명"} |{" "}
         {new Date(post.createdAt).toLocaleString()}
       </p>
       <p>{post.content}</p>

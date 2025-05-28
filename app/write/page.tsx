@@ -7,7 +7,6 @@ export default function WritePage() {
     const router = useRouter();
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
-    const [author, setAuthor] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
@@ -15,7 +14,6 @@ export default function WritePage() {
       const newPost = {
         title,
         content, 
-        author,
       };
 
       const res = await fetch("/api/posts", {
@@ -51,14 +49,6 @@ export default function WritePage() {
           onChange={(e) => setContent(e.target.value)}
           className="w-full border px-3 py-2 rounded h-40"
           required
-        />
-
-        <input
-          type="text"
-          placeholder="작성자 (선택)"
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
         />
 
         <button
