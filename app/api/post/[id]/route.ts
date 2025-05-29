@@ -42,7 +42,7 @@ export async function PUT(req: Request) {
 }
 
 export async function GET(
-  req: Request,
+  _: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -75,7 +75,7 @@ export async function GET(
 }
 
 export async function DELETE(
-  req: Request,
+  _: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {

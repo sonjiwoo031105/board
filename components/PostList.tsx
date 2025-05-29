@@ -4,27 +4,13 @@ import { Post } from "@/types/post";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-interface ClientPost extends Omit<Post, "_id"> {
-  _id?: string;
-}
-
 export default function PostList() {
-    const [posts, setPosts] = useState<ClientPost[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
-        async function fetchPosts() {
-        const res = await fetch("/api/posts");
-        const data = await res.json();
-
-        const converted = data.map((post: Post) => ({
-            ...post,
-            _id: post._id?.toString(),
-        }));
-
-        setPosts(converted);
-        }
-
-        fetchPosts();
+      fetch(`/api/posts`)
+        .then((res) => res.json())
+        .then((data) => setPosts(data));
     }, []);
 
     return (
@@ -33,8 +19,8 @@ export default function PostList() {
         ) : (
             <ul className="space-y-4">
             {posts.map((post) => (
-                <li key={post._id} className="border p-4 rounded-lg shadow-sm">
-                <Link href={`/post/${post._id}`}>
+                <li key={post._id?.toString()} className="border p-4 rounded-lg shadow-sm">
+                <Link href={`/post/${post._id?.toString()}`}>
                     <h2 className="text-xl font-semibold hover:underline">{post.title}</h2>
                 </Link>
                 <p className="text-gray-600 text-sm">

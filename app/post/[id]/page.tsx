@@ -1,4 +1,5 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import CommentSection from "@/components/CommentSection";
 import DeleteButton from "@/components/DeleteButton";
 import LikeButton from "@/components/LikeButton";
 import { getServerSession } from "next-auth";
@@ -39,6 +40,8 @@ export default async function PostDetail(context: Props) {
           <DeleteButton postId={postId} />
         </div>
       </div>
+
+      <CommentSection postId={postId} />
     </main>
   );
 }

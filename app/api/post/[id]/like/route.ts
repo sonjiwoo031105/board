@@ -5,7 +5,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
 export async function PUT(
-    req: Request,
+    _: Request,
     context: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authOptions);
