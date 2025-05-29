@@ -1,8 +1,8 @@
 import { connectDB } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function PUT(req: NextRequest) {
+export async function PUT(req: Request) {
   try {
     const { id, title, content } = await req.json();
 
@@ -43,14 +43,16 @@ export async function PUT(req: NextRequest) {
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: postId } = await context.params;
     const client = await connectDB();
     const db = client.db("board");
+
     const post = await db
       .collection("post")
-      .findOne({ _id: new ObjectId(params.id) });
+      .findOne({ _id: new ObjectId(postId) });
 
     if (!post) {
       return NextResponse.json(
@@ -59,33 +61,43 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(post, { status: 200 });
+    return NextResponse.json(
+      post,
+      { status: 200 }
+    );
   } catch (error) {
     console.error("GET 오류:", error);
-    return NextResponse.json({ messsage: "서버 에러" }, { status: 500 });
+    return NextResponse.json(
+      { messsage: "서버 에러" }, 
+      { status: 500 }
+    );
   }
 }
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id: postId } = await context.params;
     const client = await connectDB();
     const db = client.db("board");
 
-    const result = await db
+    const post = await db
       .collection("post")
-      .deleteOne({ _id: new ObjectId(params.id) });
+      .deleteOne({ _id: new ObjectId(postId) });
 
-    if (result.deletedCount === 0) {
+    if (post.deletedCount === 0) {
       return NextResponse.json(
         { message: "삭제할 게시글이 없습니다." },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({ message: "게시글이 삭제되었습니다." }, { status: 200 });
+    return NextResponse.json(
+      { message: "게시글이 삭제되었습니다." }, 
+      { status: 200 }
+    );
   } catch (error) {
     return NextResponse.json(
       { message: "서버 에러", error },

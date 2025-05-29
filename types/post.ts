@@ -9,5 +9,6 @@ export interface Post {
     email?: string | null;
   };       
   createdAt: string;      
-  updatedAt?: string;     
+  updatedAt?: string;  
+  likes?: string[];   
 }
