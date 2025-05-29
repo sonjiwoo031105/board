@@ -2,9 +2,7 @@ import Link from "next/link";
 import { Post } from "@/types/post";
 
 export default async function PostList() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
-    next: { revalidate: 60 },
-  });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`);
 
   const posts: Post[] = await res.json();
 

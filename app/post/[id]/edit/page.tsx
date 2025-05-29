@@ -59,7 +59,7 @@ export default function EditPage({ params }: { params: Promise<{ id: string }> }
       setMessage("✅ 수정 완료!");
       setTimeout(() => {
         router.replace(`/post/${id}`);
-      }, 1500);
+      }, 500);
     } catch (err) {
       setError("❌ 네트워크 오류가 발생했습니다.");
     }

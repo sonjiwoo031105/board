@@ -2,6 +2,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import CommentSection from "@/components/CommentSection";
 import DeleteButton from "@/components/DeleteButton";
 import LikeButton from "@/components/LikeButton";
+import { Post } from "@/types/post";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 
@@ -15,7 +16,12 @@ export default async function PostDetail(context: Props) {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/post/${postId}`, {
     next: { revalidate: 30 },
   });
-  const post = await res.json();
+  const post: Post = await res.json();
+
+  const isMe = (
+    post.author?.name == session?.user?.name && 
+    post.author?.email == session?.user?.email
+  ) ? true : false;
 
   return (
     <main className="max-w-2xl mx-auto p-4">
@@ -26,21 +32,24 @@ export default async function PostDetail(context: Props) {
       </p>
       <p>{post.content}</p>
 
-      <div className="flex justify-between items-center">
-        <LikeButton
-          postId={postId}
-          initialLiked={post.likes?.includes(session?.user?.email || "") || false}
-          initialCount={post.likes?.length || 0}
-        />
-        <div>
-          <Link href={`/post/${postId}/edit`}>
-            <button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
-              수정하기
-            </button>
-          </Link>
-          <DeleteButton postId={postId} />
+      {isMe && (
+        <div className="flex justify-between items-center">
+          <LikeButton
+            postId={postId}
+            initialLiked={post.likes?.includes(session?.user?.email || "") || false}
+            initialCount={post.likes?.length || 0}
+          />
+          <div>
+            <Link href={`/post/${postId}/edit`}>
+              <button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+                수정하기
+              </button>
+            </Link>
+            <DeleteButton postId={postId} />
+          </div>
         </div>
-      </div>
+      )}
+
       <CommentSection postId={postId} />
     </main>
   );

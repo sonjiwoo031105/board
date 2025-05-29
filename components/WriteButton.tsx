@@ -11,7 +11,8 @@ export default function WriteButton() {
     if (status === "loading") return;
 
     if (!session) {
-      signIn(undefined, { callbackUrl: "/write" });
+      alert("로그인 후 이용 가능합니다.");
+      router.push("/login");
     } else {
       router.push("/write");
     }

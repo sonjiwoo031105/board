@@ -23,9 +23,9 @@ export default function WritePage() {
     });
 
     if (res.ok) {
-        router.push("/");
+      router.push("/");
     } else {
-        alert("글 작성에 실패했어요 😢");
+      alert("글 작성에 실패했어요 😢");
     }
   };
 

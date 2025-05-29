@@ -1,12 +1,17 @@
 import { connectDB } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { authOptions } from "../../auth/[...nextauth]/route";
+import { isAuthorized } from "@/lib/isAuthorized";
 
 export async function PUT(req: Request) {
   try {
-    const { id, title, content } = await req.json();
+    const session = await getServerSession(authOptions);
 
-    if (!id || !title || !content) {
+    const { id: postId, title, content } = await req.json();
+
+    if (!postId || !title || !content) {
       return NextResponse.json(
         { message: "필수 항목이 누락되었습니다." },
         { status: 400 }
@@ -14,8 +19,16 @@ export async function PUT(req: Request) {
     }
 
     const db = (await connectDB()).db("board");
-    const result = await db.collection("post").updateOne(
-      { _id: new ObjectId(id) },
+
+    await isAuthorized({
+      db,
+      collection: "post",
+      id: postId,
+      session
+    });
+
+    await db.collection("post").updateOne(
+      { _id: new ObjectId(postId) },
       {
         $set: {
           title,
@@ -25,19 +38,18 @@ export async function PUT(req: Request) {
       }
     );
 
-    if (result.matchedCount === 0) {
-      return NextResponse.json(
-        { message: "해당 게시글이 존재하지 않습니다." },
-        { status: 404 }
-      );
+    return NextResponse.json({ message: "수정 완료" });
+  } catch (err: any) {
+    switch (err.message) {
+      case "UNAUTHORIZED":
+        return NextResponse.json({ message: "로그인이 필요합니다" }, { status: 401 });
+      case "FORBIDDEN":
+        return NextResponse.json({ message: "권한이 없습니다" }, { status: 403 });
+      case "NOT_FOUND":
+        return NextResponse.json({ message: "게시글을 찾을 수 없습니다" }, { status: 404 });
+      default:
+        return NextResponse.json({ message: "서버 에러" }, { status: 500 });
     }
-
-    return NextResponse.json({ message: "수정 완료", result });
-  } catch (error) {
-    return NextResponse.json(
-      { message: "서버 에러", error },
-      { status: 500 }
-    );
   }
 }
 
@@ -56,7 +68,7 @@ export async function GET(
 
     if (!post) {
       return NextResponse.json(
-        { message: "게시글을 찾을 수 없습니다." },
+        { message: "Post not found" },
         { status: 404 }
       );
     }
@@ -79,29 +91,37 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await getServerSession(authOptions);
+
     const { id: postId } = await context.params;
     const client = await connectDB();
     const db = client.db("board");
 
-    const post = await db
+    await isAuthorized({
+      db,
+      collection: "post",
+      id: postId,
+      session
+    });
+
+    await db
       .collection("post")
       .deleteOne({ _id: new ObjectId(postId) });
 
-    if (post.deletedCount === 0) {
-      return NextResponse.json(
-        { message: "삭제할 게시글이 없습니다." },
-        { status: 404 }
-      );
-    }
-
     return NextResponse.json(
-      { message: "게시글이 삭제되었습니다." }, 
+      { message: "Post deleted" }, 
       { status: 200 }
     );
-  } catch (error) {
-    return NextResponse.json(
-      { message: "서버 에러", error },
-      { status: 500 }
-    );
+  } catch (err: any) {
+    switch (err.message) {
+      case "UNAUTHORIZED":
+        return NextResponse.json({ message: "로그인이 필요합니다" }, { status: 401 });
+      case "FORBIDDEN":
+        return NextResponse.json({ message: "권한이 없습니다" }, { status: 403 });
+      case "NOT_FOUND":
+        return NextResponse.json({ message: "게시글을 찾을 수 없습니다" }, { status: 404 });
+      default:
+        return NextResponse.json({ message: "서버 에러" }, { status: 500 });
+    }
   }
 }
