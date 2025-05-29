@@ -4,7 +4,6 @@ import DeleteButton from "@/components/DeleteButton";
 import LikeButton from "@/components/LikeButton";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
-import React from "react";
 
 interface Props {
   params: Promise< { id: string }>;
@@ -13,7 +12,9 @@ interface Props {
 export default async function PostDetail(context: Props) {
   const session = await getServerSession(authOptions);
   const { id: postId } = await context.params;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/post/${postId}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/post/${postId}`, {
+    next: { revalidate: 30 },
+  });
   const post = await res.json();
 
   return (
@@ -40,7 +41,6 @@ export default async function PostDetail(context: Props) {
           <DeleteButton postId={postId} />
         </div>
       </div>
-
       <CommentSection postId={postId} />
     </main>
   );

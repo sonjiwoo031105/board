@@ -4,32 +4,32 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function WritePage() {
-    const router = useRouter();
-    const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+  const router = useRouter();
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      const newPost = {
-        title,
-        content, 
-      };
+    const newPost = {
+      title,
+      content, 
+    };
 
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newPost),
-      });
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newPost),
+    });
 
-      if (res.ok) {
-          router.push("/");
-      } else {
-          alert("글 작성에 실패했어요 😢");
-      }
+    if (res.ok) {
+        router.push("/");
+    } else {
+        alert("글 작성에 실패했어요 😢");
     }
+  };
 
-    return (
+  return (
     <main className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">✏️ 게시글 작성</h1>
 

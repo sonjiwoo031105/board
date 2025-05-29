@@ -1,6 +1,7 @@
 import AuthButton from "@/components/AuthButton";
 import PostList from "@/components/PostList";
 import WriteButton from "@/components/WriteButton";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -12,7 +13,10 @@ export default function Home() {
           <WriteButton />
         </div>
       </div>
-      <PostList />
+      
+      <Suspense fallback={<p className="text-gray-500">게시글 로딩 중...</p>}>
+        <PostList />
+      </Suspense>
     </main>
   );
 }

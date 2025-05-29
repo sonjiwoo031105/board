@@ -8,11 +8,15 @@ export default function CommentSection({ postId }: { postId: string }) {
   const { data: session } = useSession();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`/api/comment/${postId}`)
       .then((res) => res.json())
-      .then((data) => setComments(data));
+      .then((data) => {
+        setComments(data);
+        setLoading(false);
+    });
   }, [postId]);
 
   const handleSubmit = async () => {
@@ -29,6 +33,10 @@ export default function CommentSection({ postId }: { postId: string }) {
       setNewComment("");
     }
   };
+
+  if (loading) {
+    return <p className="text-gray-500">댓글 로딩 중...</p>;
+  }
 
   return (
     <div className="mt-8">

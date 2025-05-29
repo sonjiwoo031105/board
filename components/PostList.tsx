@@ -1,36 +1,31 @@
-"use client";
-
-import { Post } from "@/types/post";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Post } from "@/types/post";
 
-export default function PostList() {
-    const [posts, setPosts] = useState<Post[]>([]);
+export default async function PostList() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
+    next: { revalidate: 60 },
+  });
 
-    useEffect(() => {
-      fetch(`/api/posts`)
-        .then((res) => res.json())
-        .then((data) => setPosts(data));
-    }, []);
+  const posts: Post[] = await res.json();
 
-    return (
-        posts.length === 0 ? (
-            <p>게시글이 없습니다.</p>
-        ) : (
-            <ul className="space-y-4">
-            {posts.map((post) => (
-                <li key={post._id?.toString()} className="border p-4 rounded-lg shadow-sm">
-                <Link href={`/post/${post._id?.toString()}`}>
-                    <h2 className="text-xl font-semibold hover:underline">{post.title}</h2>
-                </Link>
-                <p className="text-gray-600 text-sm">
-                    by {post.author?.name ?? "익명"} | {" "}
-                    {new Date(post.createdAt).toLocaleString()}
-                </p>
-                <p className="mt-2">{post.content}</p>
-                </li>
-            ))}
-            </ul>
-        )
-    );
+  if (posts.length === 0) {
+    return <p>게시글이 없습니다.</p>;
+  }
+
+  return (
+    <ul className="space-y-4">
+      {posts.map((post) => (
+        <li key={post._id?.toString()} className="border p-4 rounded-lg shadow-sm">
+          <Link href={`/post/${post._id?.toString()}`}>
+            <h2 className="text-xl font-semibold hover:underline">{post.title}</h2>
+          </Link>
+          <p className="text-gray-600 text-sm">
+            by {post.author?.name ?? "익명"} |{" "}
+            {new Date(post.createdAt).toLocaleString()}
+          </p>
+          <p className="mt-2">{post.content}</p>
+        </li>
+      ))}
+    </ul>
+  );
 }
