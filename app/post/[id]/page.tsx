@@ -13,9 +13,7 @@ interface Props {
 export default async function PostDetail(context: Props) {
   const session = await getServerSession(authOptions);
   const { id: postId } = await context.params;
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/post/${postId}`, {
-    next: { revalidate: 30 },
-  });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/post/${postId}`);
   const post: Post = await res.json();
 
   const isMe = (
@@ -32,13 +30,13 @@ export default async function PostDetail(context: Props) {
       </p>
       <p>{post.content}</p>
 
-      {isMe && (
-        <div className="flex justify-between items-center">
-          <LikeButton
-            postId={postId}
-            initialLiked={post.likes?.includes(session?.user?.email || "") || false}
-            initialCount={post.likes?.length || 0}
-          />
+      <div className="flex justify-between items-center">
+        <LikeButton
+          postId={postId}
+          initialLiked={post.likes?.includes(session?.user?.email || "") || false}
+          initialCount={post.likes?.length || 0}
+        />
+        {isMe && ( 
           <div>
             <Link href={`/post/${postId}/edit`}>
               <button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
@@ -47,8 +45,8 @@ export default async function PostDetail(context: Props) {
             </Link>
             <DeleteButton postId={postId} />
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <CommentSection postId={postId} />
     </main>

@@ -11,24 +11,33 @@ type Props = {
 
 export default function LikeButton({ postId, initialLiked, initialCount }: Props) {
   const { data: session } = useSession();
-  const [liked, setLiked] = useState(initialLiked);
-  const [count, setCount] = useState(initialCount);
+  const [isLiked, setIsLiked] = useState(initialLiked);
+  const [likeCount, setLikeCount] = useState(initialCount);
+  const [loading, setLoading] = useState(false);
 
   const toggleLike = async () => {
     if (!session) return alert("로그인이 필요합니다");
 
-    const res = await fetch(`/api/post/${postId}/like`, {
-      method: "PUT",
-    });
-    const data = await res.json();
+    setLoading(true);
+    setIsLiked((prev) => !prev);
+    setLikeCount((prev) => isLiked ? prev - 1 : prev + 1);
 
-    setLiked(data.liked);
-    setCount(data.count);
+    try {
+      await fetch(`/api/post/${postId}/like`, {
+        method: "PUT",
+      });
+    } catch (error) {
+      setIsLiked((prev) => !prev);
+      setLikeCount(() => isLiked ? likeCount + 1 : likeCount - 1);
+      alert("좋아요 처리에 실패했습니다.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <button onClick={toggleLike} className="text-sm text-gray-600 hover:text-pink-600">
-      ❤️ {liked ? "좋아요 취소" : "좋아요"} ({count})
+    <button onClick={toggleLike} disabled={loading} className="text-sm text-gray-600 hover:text-pink-600">
+      ❤️ {isLiked ? "좋아요 취소" : "좋아요"} ({likeCount})
     </button>
   );
 }
