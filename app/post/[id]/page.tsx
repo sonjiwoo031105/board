@@ -30,16 +30,16 @@ export default async function PostDetail(context: Props) {
       </p>
       <p>{post.content}</p>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mt-4">
         <LikeButton
           postId={postId}
           initialLiked={post.likes?.includes(session?.user?.email || "") || false}
           initialCount={post.likes?.length || 0}
         />
         {isMe && ( 
-          <div>
+          <div className="space-x-2">
             <Link href={`/post/${postId}/edit`}>
-              <button className="mt-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+              <button className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded transition cursor-pointer">
                 수정하기
               </button>
             </Link>

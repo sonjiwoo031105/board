@@ -21,7 +21,7 @@ export default function WriteButton() {
   return (
     <button
       onClick={handleClick}
-      className="px-4 py-2 rounded bg-blue-500 text-white hover:bg-blue-600"
+      className="px-4 py-2 rounded bg-blue-400 text-white hover:bg-blue-500 cursor-pointer transition"
     >
       글 작성하기
     </button>

@@ -39,7 +39,7 @@ export default function WritePage() {
           placeholder="제목"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full border px-3 py-2 rounded"
+          className="w-full border px-3 py-2 rounded focus:outline-blue-400"
           required
         />
 
@@ -47,13 +47,13 @@ export default function WritePage() {
           placeholder="내용"
           value={content}
           onChange={(e) => setContent(e.target.value)}
-          className="w-full border px-3 py-2 rounded h-40"
+          className="w-full border px-3 py-2 rounded h-40 focus:outline-blue-400"
           required
         />
 
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-400 text-white px-4 py-2 rounded hover:bg-blue-500 transition"
         >
           작성하기
         </button>

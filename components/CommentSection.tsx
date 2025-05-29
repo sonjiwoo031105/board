@@ -45,7 +45,7 @@ export default function CommentSection({ postId }: { postId: string }) {
       {session && (
         <div className="mb-4">
           <textarea
-            className="w-full p-2 border rounded"
+            className="w-full p-2 border rounded focus:outline-sky-500"
             rows={3}
             placeholder="댓글을 입력하세요"
             value={newComment}
@@ -53,7 +53,7 @@ export default function CommentSection({ postId }: { postId: string }) {
           />
           <button
             onClick={handleSubmit}
-            className="mt-2 px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="mt-2 px-4 py-1 bg-sky-500 text-white rounded hover:bg-blue-600 cursor-pointer transition"
           >
             댓글 작성
           </button>

@@ -36,7 +36,7 @@ export default function LikeButton({ postId, initialLiked, initialCount }: Props
   };
 
   return (
-    <button onClick={toggleLike} disabled={loading} className="text-sm text-gray-600 hover:text-pink-600">
+    <button onClick={toggleLike} disabled={loading} className="text-sm text-gray-600 hover:text-pink-600 cursor-pointer transition">
       ❤️ {isLiked ? "좋아요 취소" : "좋아요"} ({likeCount})
     </button>
   );

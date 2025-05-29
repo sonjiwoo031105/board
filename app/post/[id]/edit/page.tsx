@@ -89,7 +89,7 @@ export default function EditPage({ params }: { params: Promise<{ id: string }> }
 
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
       >
         저장
       </button>
