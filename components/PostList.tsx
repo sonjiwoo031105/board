@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { Post } from "@/types/post";
 import { useEffect, useState } from "react";
 import { SortType } from "@/types/sort";
-import { formatDate } from "@/lib/formatDate";
+import PostItem from "./PostItem";
 
 const FILTERS = [
   { label: "🕒 최신순", value: SortType.LATEST },
@@ -25,7 +24,7 @@ export default function PostList() {
         setLoading(false);
       });
   }, [sortBy]);
-  
+
   return (
     <div>
       {/* 필터 UI */}
@@ -35,10 +34,9 @@ export default function PostList() {
             key={filter.value}
             onClick={() => setSortBy(filter.value)}
             className={`px-3 py-1 rounded-full border text-sm transition cursor-pointer
-              ${
-                sortBy === filter.value
-                  ? "bg-sky-500 text-white border-sky-500"
-                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
+              ${sortBy === filter.value
+                ? "bg-sky-500 text-white border-sky-500"
+                : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
               }`}
           >
             {filter.label}
@@ -53,28 +51,7 @@ export default function PostList() {
         <p className="text-gray-500">게시글이 없습니다.</p>
       ) : (
         <ul className="space-y-4">
-          {posts.map((post) => {
-            const { text, isEdited } = formatDate(post.createdAt, post.updatedAt);
-            
-            return (
-              <li
-                key={post._id?.toString()}
-                className="border p-4 rounded-lg shadow-sm hover:shadow-md transition"
-              >
-                <Link href={`/post/${post._id?.toString()}`}>
-                  <h2 className="text-xl font-semibold hover:underline">{post.title}</h2>
-                </Link>
-                <p className="text-gray-600 text-sm">
-                  by {post.author?.name ?? "익명"} |{" "}
-                  {text} {isEdited && <span className="text-xs text-gray-400">(수정됨)</span>}
-                </p>
-                <p className="text-sm mt-1 text-gray-500">
-                  ❤️ {post.likesCount ?? 0} · 💬 {post.commentsCount ?? 0}
-                </p>
-                <p className="mt-2">{post.content}</p>
-              </li>
-            );
-          })}
+          {posts.map((post) => <PostItem post={post} key={post._id?.toString()} />)}
         </ul>
       )}
     </div>

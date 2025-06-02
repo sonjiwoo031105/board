@@ -16,7 +16,7 @@ export async function GET(
 
     const comments = await db
         .collection("comment")
-        .find({ postId })
+        .find({ postId: new ObjectId(postId) })
         .sort({ createdAt: -1 })
         .toArray();
 
@@ -28,25 +28,25 @@ export async function GET(
 
 export async function DELETE(
     _: Request,
-    context: { params: Promise<{ postId: string }> }
+    context: { params: Promise<{ commentId: string }> }
 ) {
     try {
         const session = await getServerSession(authOptions);
 
-        const { postId } = await context.params;
+        const { commentId } = await context.params;
         const client = await connectDB();
         const db = client.db("board");
 
         await isAuthorized({
             db,
             collection: "comment",
-            id: postId,
+            id: commentId,
             session
         });
 
         await db
             .collection("comment")
-            .deleteOne({ _id: new ObjectId(postId) });
+            .deleteOne({ _id: new ObjectId(commentId) });
 
         return NextResponse.json(
             { message: "Comment deleted" },
