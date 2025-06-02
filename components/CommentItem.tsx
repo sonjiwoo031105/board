@@ -1,10 +1,11 @@
 "use client";
 
 import { Comment } from "@/types/comment";
+import { ObjectId } from "mongodb";
 
 interface Props {
   comment: Comment;
-  onDelete: (id: string | undefined) => void;
+  onDelete: (id: ObjectId | undefined) => void;
   currentUserEmail?: string | null;
 }
 
@@ -20,7 +21,7 @@ export default function CommentItem({ comment, onDelete, currentUserEmail }: Pro
         {comment.author?.email === currentUserEmail && (
           <button
             className="text-sm text-red-500 hover:underline cursor-pointer"
-            onClick={() => onDelete(comment._id?.toString())}
+            onClick={() => onDelete(comment._id)}
           >
             삭제
           </button>

@@ -11,6 +11,7 @@ export default function EditPage({ params }: { params: Promise<{ id: string }> }
   const [content, setContent] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`/api/post/${id}`)
@@ -21,6 +22,7 @@ export default function EditPage({ params }: { params: Promise<{ id: string }> }
       .then((data) => {
         setTitle(data.title);
         setContent(data.content);
+        setLoading(false);
       })
       .catch(() => {
         setError("❌ 게시글을 불러올 수 없습니다.");
@@ -65,6 +67,12 @@ export default function EditPage({ params }: { params: Promise<{ id: string }> }
     }
   };
 
+  if (loading) {
+    return <div className="text-center text-gray-500 mt-10">
+      게시글 수정 화면을 불러오는 중입니다...
+    </div>;
+  }
+
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-bold">게시글 수정</h1>
@@ -89,7 +97,7 @@ export default function EditPage({ params }: { params: Promise<{ id: string }> }
 
       <button
         type="submit"
-        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition"
+        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition cursor-pointer"
       >
         저장
       </button>

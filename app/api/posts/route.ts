@@ -3,13 +3,14 @@ import { Post } from "@/types/post";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
+import { SortType } from "@/types/sort";
 
 export async function POST(req: Request) {
     try {
         const session = await getServerSession(authOptions);
-        if (!session) 
+        if (!session)
             return NextResponse.json(
-                { message: "Unauthorized" }, 
+                { message: "Unauthorized" },
                 { status: 401 }
             );
 
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
                 email: session.user?.email,
             },
             createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
         };
 
         const client = await connectDB();
@@ -42,22 +44,51 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error("POST 오류:", error);
         return NextResponse.json(
-            { messsage: "서버 오류" }, 
+            { messsage: "서버 오류" },
             { status: 500 }
         );
     }
 }
 
-export async function GET() {
+export async function GET(req: Request) {
     try {
-        const client = await connectDB();
-        const db = client.db("board");
-        const posts = await db
-            .collection("post")
-            .find()
-            .sort({ createdAt: -1 })
-            .toArray();
-    
+        const { searchParams } = new URL(req.url);
+        const sort = searchParams.get("sort") || SortType.LATEST;
+
+        const db = (await connectDB()).db("board");
+
+        let sortOption;
+        switch (sort) {
+            case SortType.LIKES:
+                sortOption = { likesCount: -1 };
+                break;
+            case SortType.COMMENTS:
+                sortOption = { commentsCount: -1 };
+                break;
+            default:
+                sortOption = { updatedAt: -1, createdAt: -1 };
+        }
+
+        const posts = await db.collection("post")
+            .aggregate([
+                {
+                    $lookup: {
+                        from: "comment",
+                        localField: "_id",
+                        foreignField: "postId",
+                        as: "comments",
+                    },
+                },
+                {
+                    $addFields: {
+                        likesCount: { $size: { $ifNull: ["$likes", []] } },
+                        commentsCount: { $size: { $ifNull: ["$comments", []] } },
+                    },
+                },
+                { $sort: sortOption },
+                { $project: { comments: 0 } }
+            ]).toArray();
+
         return NextResponse.json(posts, {
             status: 200,
             headers: {

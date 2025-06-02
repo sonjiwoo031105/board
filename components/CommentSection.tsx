@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Comment } from "@/types/comment";
 import CommentItem from "./CommentItem";
+import { ObjectId } from "mongodb";
 
 export default function CommentSection({ postId }: { postId: string }) {
   const { data: session } = useSession();
@@ -35,7 +36,7 @@ export default function CommentSection({ postId }: { postId: string }) {
     }
   };
 
-  const handleDelete = async (commentId: string | undefined) => {
+  const handleDelete = async (commentId: ObjectId | undefined) => {
     if (!confirm("댓글을 삭제할까요?")) return;
 
     const res = await fetch(`/api/comment/${commentId}`, {
@@ -44,7 +45,7 @@ export default function CommentSection({ postId }: { postId: string }) {
 
     if (res.ok) {
       alert("삭제되었습니다.");
-      setComments((prev) => prev.filter((c) => c._id!.toString() !== commentId));
+      setComments((prev) => prev.filter((c) => c._id !== commentId));
     } else {
       const data = await res.json();
       alert(data.message || "삭제에 실패했습니다.");

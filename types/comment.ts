@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 
 export interface Comment {
     _id?: ObjectId;
-    postId: string;
+    postId: ObjectId;
     author: {
         name?: string;
         email?: string;

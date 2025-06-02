@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
 export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
@@ -14,7 +15,7 @@ export async function POST(req: Request) {
     if (!postId || !content) return new Response("Invalid data", { status: 400 });
 
     const newComment = {
-        postId,
+        postId: new ObjectId(postId),
         content,
         author: {
             name: session.user?.name,
@@ -23,7 +24,7 @@ export async function POST(req: Request) {
         createdAt: new Date().toISOString(),
     };
 
-      const client = await connectDB();
+    const client = await connectDB();
     const db = client.db("board");
     await db.collection("comment").insertOne(newComment);
 
