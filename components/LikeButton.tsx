@@ -30,6 +30,7 @@ export default function LikeButton({ postId, initialLiked, initialCount }: Props
       setIsLiked((prev) => !prev);
       setLikeCount(() => isLiked ? likeCount + 1 : likeCount - 1);
       alert("좋아요 처리에 실패했습니다.");
+      console.error(error);
     } finally {
       setLoading(false);
     }

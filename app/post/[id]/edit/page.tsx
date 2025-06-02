@@ -62,8 +62,9 @@ export default function EditPage({ params }: { params: Promise<{ id: string }> }
       setTimeout(() => {
         router.replace(`/post/${id}`);
       }, 300);
-    } catch (err) {
+    } catch (error) {
       setError("❌ 네트워크 오류가 발생했습니다.");
+      console.error(error);
     }
   };
 

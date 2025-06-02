@@ -1,7 +1,7 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import CommentSection from "@/components/CommentSection";
 import DeleteButton from "@/components/DeleteButton";
 import LikeButton from "@/components/LikeButton";
+import { authOptions } from "@/lib/authOptions";
 import { formatDate } from "@/lib/formatDate";
 import { Post } from "@/types/post";
 import { getServerSession } from "next-auth";

@@ -2,8 +2,8 @@ import { connectDB } from "@/lib/mongodb";
 import { Post } from "@/types/post";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../auth/[...nextauth]/route";
 import { SortType } from "@/types/sort";
+import { authOptions } from "@/lib/authOptions";
 
 export async function POST(req: Request) {
     try {

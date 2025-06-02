@@ -2,8 +2,8 @@ import { connectDB } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import { isAuthorized } from "@/lib/isAuthorized";
+import { authOptions } from "@/lib/authOptions";
 
 export async function PUT(req: Request) {
   try {
@@ -39,16 +39,18 @@ export async function PUT(req: Request) {
     );
 
     return NextResponse.json({ message: "수정 완료" });
-  } catch (err: any) {
-    switch (err.message) {
-      case "UNAUTHORIZED":
-        return NextResponse.json({ message: "로그인이 필요합니다" }, { status: 401 });
-      case "FORBIDDEN":
-        return NextResponse.json({ message: "권한이 없습니다" }, { status: 403 });
-      case "NOT_FOUND":
-        return NextResponse.json({ message: "게시글을 찾을 수 없습니다" }, { status: 404 });
-      default:
-        return NextResponse.json({ message: "서버 에러" }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      switch (err.message) {
+        case "UNAUTHORIZED":
+          return NextResponse.json({ message: "로그인이 필요합니다" }, { status: 401 });
+        case "FORBIDDEN":
+          return NextResponse.json({ message: "권한이 없습니다" }, { status: 403 });
+        case "NOT_FOUND":
+          return NextResponse.json({ message: "게시글을 찾을 수 없습니다" }, { status: 404 });
+        default:
+          return NextResponse.json({ message: "서버 에러" }, { status: 500 });
+      }
     }
   }
 }
@@ -112,16 +114,18 @@ export async function DELETE(
       { message: "Post deleted" },
       { status: 200 }
     );
-  } catch (err: any) {
-    switch (err.message) {
-      case "UNAUTHORIZED":
-        return NextResponse.json({ message: "로그인이 필요합니다" }, { status: 401 });
-      case "FORBIDDEN":
-        return NextResponse.json({ message: "권한이 없습니다" }, { status: 403 });
-      case "NOT_FOUND":
-        return NextResponse.json({ message: "게시글을 찾을 수 없습니다" }, { status: 404 });
-      default:
-        return NextResponse.json({ message: "서버 에러" }, { status: 500 });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      switch (err.message) {
+        case "UNAUTHORIZED":
+          return NextResponse.json({ message: "로그인이 필요합니다" }, { status: 401 });
+        case "FORBIDDEN":
+          return NextResponse.json({ message: "권한이 없습니다" }, { status: 403 });
+        case "NOT_FOUND":
+          return NextResponse.json({ message: "게시글을 찾을 수 없습니다" }, { status: 404 });
+        default:
+          return NextResponse.json({ message: "서버 에러" }, { status: 500 });
+      }
     }
   }
 }
