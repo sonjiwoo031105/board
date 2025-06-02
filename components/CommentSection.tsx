@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Comment } from "@/types/comment";
+import CommentItem from "./CommentItem";
 
 export default function CommentSection({ postId }: { postId: string }) {
   const { data: session } = useSession();
@@ -34,8 +35,25 @@ export default function CommentSection({ postId }: { postId: string }) {
     }
   };
 
+  const handleDelete = async (commentId: string | undefined) => {
+    if (!confirm("댓글을 삭제할까요?")) return;
+
+    const res = await fetch(`/api/comment/${commentId}`, {
+      method: "DELETE",
+    });
+
+    if (res.ok) {
+      alert("삭제되었습니다.");
+      setComments((prev) => prev.filter((c) => c._id!.toString() !== commentId));
+    } else {
+      const data = await res.json();
+      alert(data.message || "삭제에 실패했습니다.");
+    }
+  };
+
+
   if (loading) {
-    return <p className="text-gray-500">댓글 로딩 중...</p>;
+    return <p className="text-gray-500 mt-8">댓글 로딩 중...</p>;
   }
 
   return (
@@ -62,12 +80,13 @@ export default function CommentSection({ postId }: { postId: string }) {
       
       {comments.length === 0 && <p>댓글이 없습니다.</p>}
 
-      {comments.map((c) => (
-        <div key={c._id?.toString()} className="mb-4 border-b pb-2">
-          <div className="text-sm text-gray-600">{c.author?.name || "익명"}</div>
-          <div>{c.content}</div>
-          <div className="text-xs text-gray-400">{new Date(c.createdAt).toLocaleString()}</div>
-        </div>
+      {comments.map((comment) => (
+        <CommentItem
+          key={comment._id?.toString()}
+          comment={comment}
+          onDelete={handleDelete}
+          currentUserEmail={session?.user?.email}
+        />
       ))}
     </div>
   );

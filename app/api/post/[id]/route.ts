@@ -80,7 +80,7 @@ export async function GET(
   } catch (error) {
     console.error("GET 오류:", error);
     return NextResponse.json(
-      { messsage: "서버 에러" }, 
+      { messsage: "서버 에러" },
       { status: 500 }
     );
   }
@@ -109,7 +109,7 @@ export async function DELETE(
       .deleteOne({ _id: new ObjectId(postId) });
 
     return NextResponse.json(
-      { message: "Post deleted" }, 
+      { message: "Post deleted" },
       { status: 200 }
     );
   } catch (err: any) {
