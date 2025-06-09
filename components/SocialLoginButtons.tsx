@@ -5,11 +5,15 @@ import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 
 export default function SocialLoginButtons() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return null;
+  }
 
   if (session) {
     return (
-      <div className="flex items-center gap-4">
+      <div className="ml-2 flex items-center gap-4">
         <p>{session.user?.name}님</p>
         <button onClick={() => signOut()} className="bg-gray-500 text-white px-2 py-1 rounded transition cursor-pointer">
           로그아웃
